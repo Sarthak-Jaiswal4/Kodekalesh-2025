@@ -34,7 +34,8 @@ export function Pdfs({className}:{className:any}) {
       <Popover >
         <PopoverTrigger asChild>
           {/* <Button className="bg-[#292929] hover:bg-[#313131] rounded-2xl cursor-pointer" variant="default">Sources</Button> */}
-          <Files className="bg-[#292929] hover:bg-[#313131] rounded-md cursor-pointer p-2 " size={36} />
+          {/* <Files className="bg-[#292929] hover:bg-[#313131] rounded-md cursor-pointer p-2 " size={36} /> */}
+          <h1 className="bg-[#292929] hover:bg-[#313131] rounded-md cursor-pointer p-2 w-[60px] text-center h-[35px]">Files</h1>
         </PopoverTrigger>
         <PopoverContent align="start" className="w-72 dark rounded-2xl">
           <div className="grid gap-3 pt-2">

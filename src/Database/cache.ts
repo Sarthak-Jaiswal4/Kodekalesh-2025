@@ -1,4 +1,4 @@
-import { contentSchema } from '@/models/content.model';
+import { contentSchema } from '@/models/knowledge.model';
 import { createClient, SCHEMA_FIELD_TYPE, SCHEMA_VECTOR_FIELD_ALGORITHM } from 'redis';
 import { json } from 'stream/consumers';
 import { v4 as uuidv4 } from 'uuid';

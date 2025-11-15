@@ -25,7 +25,7 @@ function Page({ params }: { params: Promise<{ id: string }> }) {
 
   return (
     <div className='w-full h-full flex justify-center items-center relative'>
-      <Chatsection userquery={load} />
+      <Chatsection userquery={load} id={id} />
     </div>
   );
 }

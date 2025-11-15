@@ -3,7 +3,7 @@ import Helper from "@/helper/Helper"
 import { StoringChatSession } from "@/Database/queries"
 import { auth } from "@/auth"
 import userModel from "@/models/user.model"
-import { ChatSession } from "@/models/chat.model"
+import { ChatSession } from "@/models/case.model"
 import DBconnection from "@/lib/Connection"
 
 await DBconnection()

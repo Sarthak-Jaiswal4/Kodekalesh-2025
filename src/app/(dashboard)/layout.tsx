@@ -36,7 +36,7 @@ export default function RootLayout({
                 <div className="w-full min-h-screen flex flex-col bg-[#1A1A1A] text-[#F4F1ED] relative">
                   <Header className='sticky top-0 z-10' />
                   {model.LM=="RAG" && 
-                  <Pdfs className={'sticky top-[65px] ml-4 z-10 cursor-pointer'} />}
+                  <Pdfs className={'sticky top-0 ml-28 z-10 cursor-pointer'} />}
                   {children}
                 </div>
                 </SidebarProvider>

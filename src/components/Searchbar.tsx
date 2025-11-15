@@ -38,7 +38,7 @@ interface props {
 
 const functions = [
   { title: "Web Search", icon: Search },
-  { title: "Deep Research", icon: Microscope },
+  // { title: "Deep Research", icon: Microscope },
   // { title: "Academic", icon: Book },
   // { title: "Code Generation", icon: Code },
   { title :'Chat', icon: MessageCircle }
@@ -126,7 +126,7 @@ function Searchbar({ className,search,dosearch }: props) {
 
   return (
     <div className={`w-full flex flex-col justify-center items-center text-[#F4F1ED] mb-6 border-0 relative`}>
-      <div className="w-[98%] sm:w-[50vw] md:w-[75vw] lg:w-190 flex justify-center">
+      <div className="w-[40%] flex justify-center">
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="w-full flex justify-center items-center overflow-y-visible z-10"
@@ -217,7 +217,7 @@ function Searchbar({ className,search,dosearch }: props) {
                     </DropdownMenuGroup>
                   </DropdownMenuContent>
                 </DropdownMenu>
-                <Toggleswitch toggle={searchModel.LM} changetoggle={updatesearchModel} />
+                {/* <Toggleswitch toggle={searchModel.LM} changetoggle={updatesearchModel} /> */}
                 
               </div>
               <Button variant="ghost" type="submit" className="rounded-3xl">
@@ -243,7 +243,7 @@ function Searchbar({ className,search,dosearch }: props) {
             </div>
           </div>
         )}
-        {searchModel.LM=="RAG" && (
+        {/* {searchModel.LM=="RAG" && (
           <div {...getRootProps({className: 'dropzone'})} className="flex bg-[#303030]/20 border-[1px] border-gray-600 absolute w-[98%] sm:w-[48vw] md:w-[73vw] lg:w-185 px-4 pt-6 rounded-lg items-center top-[80%] h-36 shadow-2xl">
            <input {...getInputProps()} multiple/>
           <div className="rounded-lg relative flex justify-center w-full cursor-pointer">
@@ -252,7 +252,7 @@ function Searchbar({ className,search,dosearch }: props) {
             </div>
           </div>
         </div>
-        )}
+        )} */}
       </div>
     </div>
   );

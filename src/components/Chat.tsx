@@ -190,6 +190,28 @@ function Chat({className,query,firstchat}:props) {
   const authorized=useMemo(() => status==='authenticated' , [status])
 
   useEffect(() => {
+    setMessage([
+      { 
+        role: "human", 
+        content: "I recently sold some stocks and received a Form 1099-B. Do I need to pay taxes on my gains?" 
+      },
+      { 
+        role: "AI", 
+        content: "Yes, if you had capital gains from the sale, you may owe taxes. The amount depends on how long you held the stocks and your total income. Would you like help calculating your tax liability?" 
+      },
+      {
+        role: "human",
+        content: "Yes, please! I held the stocks for just over a year."
+      },
+      {
+        role: "AI",
+        content: "Since you held the stocks for more than a year, your gains are considered long-term and are typically taxed at lower rates. You should report this information on your tax return, usually using Schedule D. Do you have your total gain amount?"
+      }
+    ])
+  }, [])
+  
+
+  useEffect(() => {
     
     const processFirstChat = async () => {
       firstChatProcessed.current = true
@@ -346,20 +368,20 @@ function Chat({className,query,firstchat}:props) {
     }
   }, [query.query, firstchat?.query])
 
-  useEffect(() => {
-    const fetchMessages = async () => {
-      try {
-        const response = await GetMsg(sessionname);
-        setMessage(response.data.response.messages);
-        window.scrollTo(0,document.body.scrollHeight)
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    if(status=='authenticated'){
-      fetchMessages();
-    }
-  }, [authorized])
+  // useEffect(() => {
+  //   const fetchMessages = async () => {
+  //     try {
+  //       const response = await GetMsg(sessionname);
+  //       setMessage(response.data.response.messages);
+  //       window.scrollTo(0,document.body.scrollHeight)
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   };
+  //   if(status=='authenticated'){
+  //     fetchMessages();
+  //   }
+  // }, [authorized])
 
   useEffect(() => {
     window.scrollTo({left:0, top:document.body.scrollHeight,behavior:'smooth'});
@@ -380,7 +402,7 @@ function Chat({className,query,firstchat}:props) {
     <>
     <div className={`${className} relative`}>
       <div
-        className='md:w-[80%] w-full max-w-196 h-full mx-auto flex flex-col gap-6 items-center pb-24'>
+        className='md:w-[80%] w-full h-full mx-auto flex flex-col gap-6 items-center pb-24'>
             {
               message?.length>0 ?
               message?.map((item, i) => (

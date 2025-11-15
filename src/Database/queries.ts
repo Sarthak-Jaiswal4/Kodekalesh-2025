@@ -1,6 +1,6 @@
 import DBconnection from "@/lib/Connection";
-import chatSessionModel, { ChatSession } from "@/models/chat.model"
-import contentModel, { contentSchema } from "@/models/content.model"
+import chatSessionModel, { ChatSession } from "@/models/case.model"
+import contentModel, { contentSchema } from "@/models/knowledge.model"
 import userModel from "@/models/user.model";
 import { ContentData } from "@/types/contenttype";
 

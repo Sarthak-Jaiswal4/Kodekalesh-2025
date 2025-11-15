@@ -1,8 +1,9 @@
 import DBconnection from "@/lib/Connection";
 import userModel from "@/models/user.model";
-import chatSessionModel from "@/models/chat.model";
+import chatSessionModel from "@/models/case.model";
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
+import caseDetailModel from "@/models/case.model";
 
 await DBconnection()
 
@@ -21,9 +22,9 @@ export async function GET(req:Request){
         }
 
         // Then find chat sessions for this user
-        const chatSessions = await chatSessionModel.find({ userid: user._id })
+        const Cases = await caseDetailModel.find({ judgeId: user._id })
         
-        return NextResponse.json({status: 200, response: chatSessions})
+        return NextResponse.json({status: 200, response: Cases})
 
     } catch (error:any) {
         console.log('Error in extracting chatsession API',error)

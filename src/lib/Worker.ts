@@ -4,7 +4,6 @@ import axios from 'axios';
 import {Job, Worker} from 'bullmq'
 import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
 import {Embedding} from '../helper/Helper'
-import { CohereEmbeddings } from '@langchain/cohere';
 import { StoreEmbedding } from "@/Database/queries";
 import { ContentData } from "@/types/contenttype";
 import path from "path";
@@ -17,12 +16,6 @@ const s3 = new S3Client({
       accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
       secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!
   }
-});
-
-const embeddings = new CohereEmbeddings({
-  apiKey: process.env.COHERE_API_KEY,
-  batchSize: 48,
-  model: "embed-english-v3.0",
 });
 
 const chatworker=new Worker('chatUploadQueue',async(job)=>{

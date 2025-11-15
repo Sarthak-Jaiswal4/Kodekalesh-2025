@@ -2,7 +2,7 @@ import Bottleneck from "bottleneck";
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
 import {Embedding} from '../helper/Helper'
 import { StoreEmbedding } from "@/Database/queries";
-import { contentSchema } from "@/models/content.model";
+import { contentSchema } from "@/models/knowledge.model";
 import mongoose from "mongoose";
 import vectorIndexCreate from "./createIndex";
 import { AddRedis } from "@/Database/cache";

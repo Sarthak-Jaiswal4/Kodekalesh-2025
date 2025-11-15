@@ -1,5 +1,4 @@
-import {SearchRedis} from "@/Database/cache";
-import contentModel from "@/models/content.model";
+import contentModel from "@/models/knowledge.model";
 import { CohereEmbeddings } from "@langchain/cohere";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import mongoose from "mongoose";
@@ -16,147 +15,147 @@ const llm = new ChatGoogleGenerativeAI({
   temperature: 0.1,
 });
 
-async function QueryEmbedding(query: string,type?:string) {
-  try {
-    const densequeryembedding = await embeddings.embedQuery(query);
-    const dembedding = await DenseRetrieveQuery(densequeryembedding, query,type);
-    const sembedding = await SparseRetrieveQuery(query,type);
-    const result = await mergeRetrieval(dembedding, sembedding);
-    return result;
-  } catch (error) {
-    console.log("error in querying", error);
-  }
-}
+// async function QueryEmbedding(query: string,type?:string) {
+//   try {
+//     const densequeryembedding = await embeddings.embedQuery(query);
+//     const dembedding = await DenseRetrieveQuery(densequeryembedding, query,type);
+//     const sembedding = await SparseRetrieveQuery(query,type);
+//     const result = await mergeRetrieval(dembedding, sembedding);
+//     return result;
+//   } catch (error) {
+//     console.log("error in querying", error);
+//   }
+// }
 
-async function DenseRetrieveQuery(queryembedding: number[],userquery: string,type?:string): Promise<any[]> {
-  console.log('searching for dense vector')
-  let results: any[] = [];
-  try {
-    await mongoose.connect(process.env.MONGO_URL!);
-    const collection = contentModel.collection;
-    const pipeline = [
-      {
-        $vectorSearch: {
-          index: "dense_embedding",
-          queryVector: queryembedding,
-          path: "embedding",
-          numCandidates: 100,
-          limit: type==="Deep Research"? 18 : 10,
-          similarityMetric: "cosine",
-        },
-      },
-      {
-        $project: {
-          _id: 0,
-          text: "$text",
-          chunk_index: "$chunk_index",
-          metadata: "$metadata",
-          score: { $meta: "vectorSearchScore" },
-        },
-      },
-    ];
-    const cursor = collection.aggregate(pipeline);
-    results = await cursor.toArray();
+// async function DenseRetrieveQuery(queryembedding: number[],userquery: string,type?:string): Promise<any[]> {
+//   console.log('searching for dense vector')
+//   let results: any[] = [];
+//   try {
+//     await mongoose.connect(process.env.MONGO_URL!);
+//     const collection = contentModel.collection;
+//     const pipeline = [
+//       {
+//         $vectorSearch: {
+//           index: "dense_embedding",
+//           queryVector: queryembedding,
+//           path: "embedding",
+//           numCandidates: 100,
+//           limit: type==="Deep Research"? 18 : 10,
+//           similarityMetric: "cosine",
+//         },
+//       },
+//       {
+//         $project: {
+//           _id: 0,
+//           text: "$text",
+//           chunk_index: "$chunk_index",
+//           metadata: "$metadata",
+//           score: { $meta: "vectorSearchScore" },
+//         },
+//       },
+//     ];
+//     const cursor = collection.aggregate(pipeline);
+//     results = await cursor.toArray();
 
-    console.log("Found documents:",results.length);
-    return results;
-  } catch (error) {
-    console.log("Error in finding query", error);
-    return [];
-  }
-}
+//     console.log("Found documents:",results.length);
+//     return results;
+//   } catch (error) {
+//     console.log("Error in finding query", error);
+//     return [];
+//   }
+// }
 
-async function SparseRetrieveQuery(userquery: string,type?:string): Promise<any[]> {
-  console.log('searching for sparse vector')
-  let results: any[] = [];
-  try {
-    await mongoose.connect(process.env.MONGO_URL!);
-    const collection = contentModel.collection;
-    const pipeline = [
-      {
-        $search: {
-          index: "sparse_embedding",
-          text: {
-            query: userquery,
-            path: "text",
-          },
-        },
-      },
-      {
-        $limit: type==="Deep Research"? 18: 8,
-      },
-      {
-        $project: {
-          _id: 0,
-          text: "$text",
-          chunk_index: "$chunk_index",
-          metadata: "$metadata",
-          score: { $meta: "searchScore" },
-        },
-      },
-    ];
-    const cursor = collection.aggregate(pipeline);
-    results = await cursor.toArray();
+// async function SparseRetrieveQuery(userquery: string,type?:string): Promise<any[]> {
+//   console.log('searching for sparse vector')
+//   let results: any[] = [];
+//   try {
+//     await mongoose.connect(process.env.MONGO_URL!);
+//     const collection = contentModel.collection;
+//     const pipeline = [
+//       {
+//         $search: {
+//           index: "sparse_embedding",
+//           text: {
+//             query: userquery,
+//             path: "text",
+//           },
+//         },
+//       },
+//       {
+//         $limit: type==="Deep Research"? 18: 8,
+//       },
+//       {
+//         $project: {
+//           _id: 0,
+//           text: "$text",
+//           chunk_index: "$chunk_index",
+//           metadata: "$metadata",
+//           score: { $meta: "searchScore" },
+//         },
+//       },
+//     ];
+//     const cursor = collection.aggregate(pipeline);
+//     results = await cursor.toArray();
 
-    console.log("Found documents:",results.length);
-    return results;
-  } catch (error) {
-    console.log("Error in finding sparse query", error);
-    return [];
-  }
-}
+//     console.log("Found documents:",results.length);
+//     return results;
+//   } catch (error) {
+//     console.log("Error in finding sparse query", error);
+//     return [];
+//   }
+// }
 
-async function mergeRetrieval(dembedding: any[],sembedding: any[]): Promise<any[]> {
-  const chunkids = new Set();
-  const result: any[] = [];
-  dembedding.forEach((doc, i) => {
-    let score: number;
-    const chunkid = doc.chunk_index;
-    let sparse_embedding = sembedding.findIndex(
-      (id) => id.chunk_index == chunkid
-    );
-    if (sparse_embedding != -1 || !sparse_embedding) {
-      score = 1 / (i + 1) + 1 / (sparse_embedding + 1);
-      result.push({
-        denseembedding: doc.score,
-        sparseembedding: sembedding[sparse_embedding]?.score,
-        score: score,
-        chunkid,
-        densetext: doc.text,
-        sparsetext: sembedding[sparse_embedding]?.text?.pageContent || "null",
-        metadata: doc.metadata.web
-      });
-    } else {
-      score = 1 / (i + 1);
-      result.push({
-        denseembedding: doc.score,
-        sparseembedding: sembedding[sparse_embedding]?.score || "null",
-        score: score,
-        chunkid,
-        densetext: doc.text,
-        sparsetext: "null",
-        metadata: doc.metadata.web
-      });
-    }
-    chunkids.add(chunkid);
-  });
-  sembedding.forEach((doc, i) => {
-    if (!chunkids.has(doc.chunk_index)) {
-      const score = 1 / (i + 1);
-      result.push({
-        denseembedding: "null",
-        sparseembedding: doc.score,
-        score: score,
-        chunkid: doc.chunk_index,
-        densetext: "null",
-        sparsetext: doc?.text || "null",
-        metadata: doc.metadata.web
-      });
-    }
-  });
-  result.sort((a, b) => b.score - a.score).slice(0, 8);
-  return result;
-}
+// async function mergeRetrieval(dembedding: any[],sembedding: any[]): Promise<any[]> {
+//   const chunkids = new Set();
+//   const result: any[] = [];
+//   dembedding.forEach((doc, i) => {
+//     let score: number;
+//     const chunkid = doc.chunk_index;
+//     let sparse_embedding = sembedding.findIndex(
+//       (id) => id.chunk_index == chunkid
+//     );
+//     if (sparse_embedding != -1 || !sparse_embedding) {
+//       score = 1 / (i + 1) + 1 / (sparse_embedding + 1);
+//       result.push({
+//         denseembedding: doc.score,
+//         sparseembedding: sembedding[sparse_embedding]?.score,
+//         score: score,
+//         chunkid,
+//         densetext: doc.text,
+//         sparsetext: sembedding[sparse_embedding]?.text?.pageContent || "null",
+//         metadata: doc.metadata.web
+//       });
+//     } else {
+//       score = 1 / (i + 1);
+//       result.push({
+//         denseembedding: doc.score,
+//         sparseembedding: sembedding[sparse_embedding]?.score || "null",
+//         score: score,
+//         chunkid,
+//         densetext: doc.text,
+//         sparsetext: "null",
+//         metadata: doc.metadata.web
+//       });
+//     }
+//     chunkids.add(chunkid);
+//   });
+//   sembedding.forEach((doc, i) => {
+//     if (!chunkids.has(doc.chunk_index)) {
+//       const score = 1 / (i + 1);
+//       result.push({
+//         denseembedding: "null",
+//         sparseembedding: doc.score,
+//         score: score,
+//         chunkid: doc.chunk_index,
+//         densetext: "null",
+//         sparsetext: doc?.text || "null",
+//         metadata: doc.metadata.web
+//       });
+//     }
+//   });
+//   result.sort((a, b) => b.score - a.score).slice(0, 8);
+//   return result;
+// }
 
 async function PDFQueryEmbedding(query: string,PDFs:string[]): Promise<string | undefined> {
   try {
@@ -374,4 +373,4 @@ ${userquery}
   }
 }
 
-export default { QueryEmbedding,PDFQueryEmbedding };
+export default PDFQueryEmbedding;

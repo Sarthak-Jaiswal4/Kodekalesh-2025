@@ -20,11 +20,11 @@ interface AppSidebarProps {
 }
 
 const items = [
-  {
-    title: "New Chat",
-    url: "/",
-    icon: Plus,
-  },
+  // {
+  //   title: "New Chat",
+  //   url: "/",
+  //   icon: Plus,
+  // },
   {
     title: "Search",
     url: "#",
@@ -33,7 +33,7 @@ const items = [
 ]
 
 export function AppSidebar({ chatsession }: AppSidebarProps) {
-  const [chats, setChats] = useState<chatsessiontype[]>([]);
+  const [chats, setChats] = useState<any[]>([]);
   const { setOpen,open } = useSidebar()
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const chatid=useParams()
@@ -43,29 +43,19 @@ export function AppSidebar({ chatsession }: AppSidebarProps) {
   const [chatID, setchatID] = useState("")
   const pathname = usePathname()
 
-  const getchats = async () => {
+  const getDocs = async () => {
     try {
-      await axios.get('/api/getchatsession')
+      await axios.get('/api/getCaseDetail')
         .then((res) => {
-          const prevchats = res.data.response
-          prevchats.map((e: { sessionname: string; _id: string, createdAt: string }) => (
-            setChats((prev) => [
-              ...prev,
-              {
-                id: e._id,
-                title: e.sessionname,
-                url: `/chat/${e._id}`,
-                createdAt: `${Math.floor(Math.random() * 10000)}`
-              }
-            ])
-          ))
+          const prevcases = res.data.response
+          setChats(prevcases)
         })
     } catch (error) {
       console.log(error)
     }
   }
 
-  const DeleteChat=async()=>{
+  const DeleteDocs=async()=>{
     try {
       await axios.post('/api/deletechat',{chatid:chatID})
       .then((e)=>{
@@ -98,12 +88,12 @@ export function AppSidebar({ chatsession }: AppSidebarProps) {
       setChats(prevChats => [chatsession, ...prevChats])
     }
     setOpen(false)
-    getchats()
+    getDocs()
   }, [chatsession])
 
   useEffect(() => {
     if(deleteaction==true){
-      DeleteChat()
+      DeleteDocs()
     }
   }, [deleteaction])
   
@@ -136,19 +126,19 @@ export function AppSidebar({ chatsession }: AppSidebarProps) {
               <SidebarContent className="w-full">
                 {isLoading ? (
                   <div className="group-data-[collapsible=icon]:hidden flex flex-col justify-center items-start overflow-hidden">
-                    <h1 className="pb-4 pt-5 text-medium text-gray-400">Chats</h1>
+                    <h1 className="pb-4 pt-5 text-medium text-gray-400">Cases pdfs</h1>
                     <ChatNameSkeleton />
                   </div>
                 ) : isAuthenticated ? (
                   <div className="group-data-[collapsible=icon]:hidden text-[#F4F1ED] overflow-x-hidden overflow-y-hidden">
-                    <SidebarGroupLabel className="pb-4 pt-8 text-base text-gray-400">Chats</SidebarGroupLabel>
+                    <SidebarGroupLabel className="pb-4 pt-8 text-base text-gray-400">Cases pdfs</SidebarGroupLabel>
                     <SidebarGroupContent>
                       <SidebarMenu>
                         {chats.toReversed().map((item) => (
                           <SidebarMenuItem className="group" >
-                            <SidebarMenuButton className={`${item.id===chatid.id ? `bg-[#272727]` : null} flex hover:text-[#F4F1ED] hover:bg-[#242424]`} asChild>
-                              <a href={item.url}>
-                                <span>{item.title}</span>
+                            <SidebarMenuButton className={`${item.id===chatid.id ? `bg-[#272727]` : null} flex hover:text-[#F4F1ED] hover:bg-[#242424] hover:cursor-pointer`} asChild>
+                              <a href={`/chat/${item._id}`}>
+                                <span>{item.caseTitle}</span>
                               </a>
                             </SidebarMenuButton>
                             <DropdownMenu>

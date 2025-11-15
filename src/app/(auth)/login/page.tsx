@@ -3,35 +3,57 @@ import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Sparkles, Brain, RefreshCw } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { signIn, SignInResponse } from "next-auth/react"
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 
+const SPECIALTY_OPTIONS = [
+  'Civil-Corporate',
+  'Criminal-Appellate',
+  'Family Law',
+  'Intellectual Property',
+  'Tax Law',
+  'Labor Law',
+  'Others'
+];
+
+// Ensure specialty can only ever be a string[] since we are using multiple select
 const Page = () => {
-  const [issubmitting, setissubmitting] = useState(false)
+  const [issubmitting, setissubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     identifier: '',
     password: '',
+    specialties: [] as string[],
   });
-  const router=useRouter()
+  const router = useRouter();
 
-  const handleInputChange = (e:any) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
   };
-  
-  const handleSubmit =async () => {
+
+  // Accept either string (single) or string[] (multi) for generic Select component, but enforce string[] here, as we only use multi
+  const handleSpecialtyChange = (values: string[] | string) => {
+    setFormData({
+      ...formData,
+      specialties: Array.isArray(values) ? values : [values]
+    });
+  };
+
+  const handleSubmit = async () => {
     console.log('Form submitted:', formData);
     try {
       setissubmitting(true)
-      const signInAttempt = await signIn('credentials',{
-        identifier:formData.identifier,
-        password:formData.password,
+      const signInAttempt = await signIn('credentials', {
+        identifier: formData.identifier,
+        password: formData.password,
+        specialties: formData.specialties,
         redirect: false,
         callbackUrl: '/',
       }) as SignInResponse;
       console.log(signInAttempt)
-      if (signInAttempt?.status===200) {
+      if (signInAttempt?.status === 200) {
         setissubmitting(false)
         router.push('/')
       } else {
@@ -139,6 +161,40 @@ const Page = () => {
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
+              </div>
+            </div>
+
+            {/* Specialties field */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-200 pb-2">
+                Specialties <span className="text-gray-400">(Select one or more)</span>
+              </label>
+              <div>
+                <div className="w-full">
+                  <Select
+                    multiple
+                    value={formData.specialties}
+                    // Pass both multi and non-multi signature
+                    onValueChange={handleSpecialtyChange}
+                  >
+                    <SelectTrigger className="w-full bg-gray-800/50 border border-gray-600 rounded-xl text-[#F4F1ED] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 py-6">
+                      {formData.specialties.length > 0
+                        ? formData.specialties.join(", ")
+                        : <span className="text-gray-400">Select specialty...</span>
+                      }
+                    </SelectTrigger>
+                    <SelectContent className='bg-gray-700'>
+                      {SPECIALTY_OPTIONS.map(option => (
+                        <SelectItem key={option} value={option} className='py-2'>
+                          {option}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="text-xs text-gray-500 mt-1">
+                  E.g., 'Civil-Corporate', 'Criminal-Appellate', 'Family Law'
+                </div>
               </div>
             </div>
 

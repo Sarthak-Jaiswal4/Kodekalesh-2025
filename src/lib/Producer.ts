@@ -1,8 +1,6 @@
 'use server'
 import {Queue} from 'bullmq'
 import { cookies } from 'next/headers'
-import { writeFile } from "fs/promises";
-import path from "path";
 import { UploadS3 } from './S3bucket';
 
 const ChatUploadQueue= new Queue('chatUploadQueue',{

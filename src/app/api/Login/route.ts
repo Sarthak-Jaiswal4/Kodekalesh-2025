@@ -4,8 +4,8 @@ import { NextResponse } from "next/server";
 
 export async function POST(request:Request){
     try {
-        const {email,password}= await request.json()
-        if(!password || !email){
+        const {email,password,specialties}= await request.json()
+        if(!password || !email || !specialties){
             return NextResponse.json({
                 status:400,
                 message:"Some credentials are missing"
@@ -18,6 +18,9 @@ export async function POST(request:Request){
         const ispassword= await bcrypt.compare(password,user?.password)
         if(!ispassword){
           throw new Error("Incorrect Password")
+        }
+        if(user.specialties[0]!=specialties){
+          throw new Error("Incorrect specialities")
         }
         const safeUser = {
           id:         user._id.toString(),

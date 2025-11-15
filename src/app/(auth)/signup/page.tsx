@@ -2,36 +2,63 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Sparkles, Brain, CheckCircle, RefreshCw } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from '@/components/ui/input-otp';
 import { signIn, SignInResponse } from 'next-auth/react';
 import axios from 'axios';
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
+
+const SPECIALTY_OPTIONS = [
+  'Civil-Corporate',
+  'Criminal-Appellate',
+  'Family Law',
+  'Intellectual Property',
+  'Tax Law',
+  'Labor Law',
+  'Others'
+];
 
 const AuthPages = () => {
   const [verify, setverify] = useState(false)
   const [issubmitting, setissubmitting] = useState(false)
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  // Change specialties default type to array (for potential multi-select in future)
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    specialties: [], // string[]
+    agreeToTerms: false // must agree to terms
   });
   const router = useRouter()
 
+  // Always store as array for consistency
+  const handleSpecialtyChange = (value: string) => {
+    setFormData({
+      ...formData,
+      specialties: [value as string]
+    });
+  };
+
   const handleSubmit = async() => {
     // Handle form submission logic here
-    if(formData.password!=formData.confirmPassword) return
+    if(formData.password !== formData.confirmPassword) return
+    if (!formData.agreeToTerms) {
+      alert('You must agree to the Terms of Service and Privacy Policy.');
+      return;
+    }
     console.log('Form submitted:', formData);
     try {
       setissubmitting(true)
-      const user=await axios.post('/api/signIn',{
-        ...formData
+      // If backend expects specialties as string, send as string. Otherwise, send as array.
+      const user = await axios.post('/api/signIn',{
+        ...formData,
+        specialties: formData.specialties.length === 1 ? formData.specialties[0] : formData.specialties
       })
 
-      if(user.data.status==200){
+      if(user.data.status === 200){
         sessionStorage.setItem("verifycode",JSON.stringify({ userId:user.data.createdUser._id , email:user.data.createdUser.email  }))
-        const sendemail= await axios.post('/api/send',{
+        await axios.post('/api/send',{
           email:formData.email,
           verificationCode:user.data.createdUser.verificationcode
         })
@@ -49,7 +76,6 @@ const AuthPages = () => {
       throw new Error(error)
     }
   };
-
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-black flex items-center justify-center p-4">
@@ -114,6 +140,39 @@ const AuthPages = () => {
               </div>
             </div>
 
+            {/* Specialties field */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-200 pb-2">
+                Specialties <span className="text-gray-400">(Select one or more)</span>
+              </label>
+              <div>
+                <div className="w-full">
+                  <Select
+                    value={formData.specialties[0] ? formData.specialties[0] : ''}
+                    // Pass both multi and non-multi signature
+                    onValueChange={handleSpecialtyChange}
+                  >
+                    <SelectTrigger className="w-full bg-gray-800/50 border border-gray-600 rounded-xl text-[#F4F1ED] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 py-6">
+                      {formData.specialties && Array.isArray(formData.specialties) && formData.specialties.length > 0
+                        ? formData.specialties.join(", ")
+                        : <span className="text-gray-400">Select specialty...</span>
+                      }
+                    </SelectTrigger>
+                    <SelectContent className='bg-gray-700 text-white'>
+                      {SPECIALTY_OPTIONS.map(option => (
+                        <SelectItem key={option} value={option} className='py-2'>
+                          {option}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="text-xs text-gray-500 mt-1">
+                  E.g., 'Civil-Corporate', 'Criminal-Appellate', 'Family Law'
+                </div>
+              </div>
+            </div>
+
             {/* Password field */}
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-200">Password</label>
@@ -162,13 +221,33 @@ const AuthPages = () => {
               </div>
             </div>
 
+            {/* Agree to Terms */}
+            <div className="flex items-start space-x-3">
+              <input
+                type="checkbox"
+                name="agreeToTerms"
+                id="agreeToTerms"
+                checked={formData.agreeToTerms}
+                onChange={(e) =>
+                  setFormData((d: any) => ({ ...d, agreeToTerms: e.target.checked }))
+                }
+                className="accent-blue-600 w-5 h-5 mt-1 rounded border-gray-600 bg-gray-800/50"
+                required
+              />
+              <label htmlFor="agreeToTerms" className="text-sm text-gray-300 select-none">
+                I agree to the{' '}
+                <a href="#" className="underline text-blue-400 hover:text-blue-300">Terms of Service</a>
+                {' '}and{' '}
+                <a href="#" className="underline text-blue-400 hover:text-blue-300">Privacy Policy</a>
+              </label>
+            </div>
+
             {/* Submit Button */}
             <button
               type="button"
               onClick={handleSubmit}
               className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-[#F4F1ED] py-3 px-4 rounded-xl font-medium flex items-center justify-center space-x-2 hover:from-blue-700 hover:to-cyan-700 transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl group"
             >
-              
               {issubmitting ? (
                 <>
                   <RefreshCw className="w-5 h-5 animate-spin" />
@@ -207,16 +286,6 @@ const AuthPages = () => {
                 </svg>
                 <span>Continue with Google</span>
               </button>
-              
-              {/* <button
-                type="button"
-                className="w-full bg-gray-800/50 border border-gray-600 text-[#F4F1ED] py-3 px-4 rounded-xl font-medium flex items-center justify-center space-x-2 hover:bg-gray-700/50 transition-all duration-200"
-              >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.174-.105-.949-.199-2.403.042-3.441.219-.937 1.404-5.965 1.404-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738.098.119.112.224.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.357-.631-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24.009 12.017 24c6.624 0 11.99-5.367 11.99-11.987C24.007 5.367 18.641.001 12.017.001z"/>
-                </svg>
-                <span>Continue with GitHub</span>
-              </button> */}
             </div>
           </div>
 

@@ -1,12 +1,14 @@
 import { NextResponse } from "next/server"
 import bcrypt from 'bcrypt'
 import userModel from "@/models/user.model"
+import DBconnection from "@/lib/Connection"
 
+await DBconnection()
 export async function POST(request:Request){
     try {
-        const {name,email,password}=await request.json()
+        const {name,email,password,specialties}=await request.json()
 
-        if(!name || !email || !password){
+        if(!name || !email || !password || !specialties){
             console.log('Missing credential')
             return NextResponse.json({status:404,message:"Error Missing credential"})
         }
@@ -21,7 +23,8 @@ export async function POST(request:Request){
             email,
             password:hashedpassword,
             verificationcode,
-            ExpiryTime
+            ExpiryTime,
+            specialties,
         })
 
         if(!createdUser){

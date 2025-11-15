@@ -44,14 +44,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       credentials: {
         email: { label: "email", type: 'text' },
         password: { label: "Password", type: "password" },
+        specialties: { label: "specialties", type: "text" },
       },
       async authorize(credentials: any): Promise<any> {
         console.log("credentials", credentials)
         const email = credentials.identifier
         const password = credentials.password
+        const specialties= credentials.specialties
         const baseURL = process.env.NEXTAUTH_URL || 'http://localhost:3000';
         const safeUser = await axios.post(`${baseURL}/api/Login`, {
-          password, email
+          password, email, specialties
         });
         console.log(safeUser.data)
         const user=safeUser.data.safeUser

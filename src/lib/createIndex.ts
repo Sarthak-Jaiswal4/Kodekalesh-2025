@@ -1,4 +1,4 @@
-import contentModel from "@/models/content.model";
+import contentModel from "@/models/knowledge.model";
 import mongoose from "mongoose";
 
 const mongoUrl = process.env.MONGO_URL
