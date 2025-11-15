@@ -1,7 +1,6 @@
 import axios from "axios";
 import Helper from "./Helper";
 import { URLArray } from "./ExtractingInfo";
-import { z } from "zod";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { JsonOutputParser } from "@langchain/core/output_parsers";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
