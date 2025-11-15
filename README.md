@@ -56,34 +56,6 @@ Enhanced RAG Models: Fine-tune our embedding models specifically on Indian Penal
 
 Multi-Stakeholder Access: Expand the platform to provide specific interfaces for Advocates, Law Students, Police, and Civilians to track case status transparently.
 
-🏁 Getting Started
-
-Clone the repository:
-
-git clone [your-repo-url]
-
-
-
-Navigate to the directory:
-
-cd [project-directory]
-
-
-
-Install dependencies:
-
-npm install
-
-
-
-Run the project:
-
-npm run dev
-# or
-npm start
-
-
-
 Open http://localhost:3000 to view it in your browser.
 
 👥 Team Members
