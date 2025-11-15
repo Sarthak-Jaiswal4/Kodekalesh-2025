@@ -143,12 +143,13 @@ function TagInput({
 }
 
 const documentTypes = [
-  "Motion to Dismiss",
-  "Motion for Summary Judgment",
-  "Expert Witness Report",
+  "Motion",
+  "Pleading",
+  "Evidence",
+  "Order",
   "Exhibit",
-  "Notice of Appearance",
-  "Proposed Order",
+  "Notice",
+  "Complaint",
 ];
 
 const judgeActions = [
@@ -160,9 +161,9 @@ const judgeActions = [
 ];
 
 const accessOptions = [
-  { value: "public", label: "Public" },
-  { value: "parties", label: "Parties and Court Only" },
-  { value: "sealed", label: "Sealed (Judge Only)" }
+  { value: "Public", label: "Public" },
+  { value: "Parties and Court", label: "Parties and Court" },
+  { value: "Sealed (Judge Only)", label: "Sealed (Judge Only)" }
 ];
 
 // For demo: we'll allow manual entry of case number and title
@@ -175,7 +176,7 @@ export default function UploadPage() {
     "Plaintiff", "Defendant", "Counsel", "Other"
   ]);
   const [docTitle, setDocTitle] = useState("");
-  const [file, setFile] = useState<File | undefined>(null);
+  const [file, setFile] = useState<File | undefined>();
 
   const [legalTopics, setLegalTopics] = useState<string[]>([]);
 //   const [summary, setSummary] = useState(""); /// get from LLM
@@ -187,20 +188,20 @@ export default function UploadPage() {
   const [submitting, setSubmitting] = useState(false);
   const [fileURL, setfileURL] = useState<string | undefined>(undefined)
 
-  const InputFile=async(e:React.ChangeEvent<HTMLInputElement>)=>{
-    const File=e.target?.files?.[0]
-    console.log(File)
-    setFile(File)
-    if(File){
-      const url=URL.createObjectURL(File)
-      console.log(url)
-      setfileURL(url)
-      await Upload(File)
-      console.log('File uploaded successfully')
-    }else{
-      setfileURL(undefined)
-    }
-  }
+  // const InputFile=async(e:React.ChangeEvent<HTMLInputElement>)=>{
+  //   const File=e.target?.files?.[0]
+  //   console.log(File)
+  //   setFile(File)
+  //   if(File){
+  //     const url=URL.createObjectURL(File)
+  //     console.log(url)
+  //     setfileURL(url)
+  //     await Upload(File)
+  //     console.log('File uploaded successfully')
+  //   }else{
+  //     setfileURL(undefined)
+  //   }
+  // }
 
   useEffect(() => {
     if (file && file.name) {
@@ -212,32 +213,36 @@ export default function UploadPage() {
     e.preventDefault();
     setSubmitting(true);
 
-    // Construct payload
-    const payload: any = {
-      caseNumber,
-      caseTitle,
-      docType,
-      filingParty,
-      docTitle,
-      legalTopics,
-      accessLevel,
-      judgeAction,
-      respRequired,
-      respDueDate: respRequired && respDueDate ? respDueDate : null,
-    //   file,
-    };
-    // Submit to backend
-    const response=await axios.post("/api/upload",{payload})
-    .then((e)=>{
-        console.log(e.data)
-    })
-    .catch((e)=>{
-        console.log("error",e)
-    })
-    .finally(() => {
-        setSubmitting(false)
-    })
+    const formData = new FormData();
+    formData.append("caseNumber", caseNumber);
+    formData.append("caseTitle", caseTitle);
+    formData.append("docType", docType);
+    formData.append("filingParty", filingParty);
+    formData.append("docTitle", docTitle);
+    formData.append("accessLevel", accessLevel);
+    formData.append("judgeAction", judgeAction);
+    formData.append("respRequired", JSON.stringify(respRequired));
+    formData.append(
+      "respDueDate",
+      respRequired && respDueDate ? respDueDate.toISOString() : ""
+    );
+    if (file) {
+      formData.append("file", file);
+    }
+    formData.append("legalTopics", JSON.stringify(legalTopics));
 
+    try {
+      const response = await axios.post("/api/upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log(response.data);
+    } catch (e) {
+      console.log("error", e);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -326,7 +331,7 @@ export default function UploadPage() {
                 type="file"
                 accept=".pdf"
                 onChange={(e) => {
-                  InputFile(e)
+                  setFile(e.target?.files?.[0])
                 }}
                 />
             </div>

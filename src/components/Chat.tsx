@@ -6,9 +6,7 @@ import AiResponse from './AiResponse'
 import ChatSkeleton from './ChatSkeleton'
 import { useSession } from 'next-auth/react'
 import SignUpPopup from './SignUp'
-import { init } from '@/lib/Producer'
 import { useStore } from '@/store/store'
-import ExcalidrawApp from './Excalidraw'
 
 interface props {
     className?:string,
@@ -135,19 +133,6 @@ const searchOrweb=async(payload: formvalues,setIsSearching:React.Dispatch<React.
   }
 }
 
-const GetMsg=async(sessionname:string)=>{
-  try {
-    const messages=await axios.post('/api/getMessages',{ chatsessionid: sessionname })
-    if(messages.data.response.status>=300){
-      throw new Error("Something went wrong while retrieving data from API")
-    }
-    return messages
-  } catch (error:any) {
-    console.log("Error in getting message from API")
-    throw new Error(error)
-  }
-}
-
 const RagSearch=async(query:string,activepdfs:string[],setMessage:React.Dispatch<React.SetStateAction<messagetype[]>>,setSourcelist:React.Dispatch<React.SetStateAction<Array<string>>>,setIsSearching:React.Dispatch<React.SetStateAction<boolean>>)=>{
   try {
     const search= await axios.post('/api/ragSearch',{
@@ -192,25 +177,24 @@ function Chat({className,query,firstchat}:props) {
   useEffect(() => {
     setMessage([
       { 
+        role: "AI", 
+        content: "Good morning, Your Honor. How may I assist the Court today?"
+      },
+      { 
         role: "human", 
-        content: "I recently sold some stocks and received a Form 1099-B. Do I need to pay taxes on my gains?" 
+        content: "Good morning, Your Honor. How may I assist the Court today?"
       },
       { 
         role: "AI", 
-        content: "Yes, if you had capital gains from the sale, you may owe taxes. The amount depends on how long you held the stocks and your total income. Would you like help calculating your tax liability?" 
+        content: "Good morning, Your Honor. How may I assist the Court today?"
       },
-      {
-        role: "human",
-        content: "Yes, please! I held the stocks for just over a year."
+      { 
+        role: "human", 
+        content: "Good morning, Your Honor. How may I assist the Court today?"
       },
-      {
-        role: "AI",
-        content: "Since you held the stocks for more than a year, your gains are considered long-term and are typically taxed at lower rates. You should report this information on your tax return, usually using Schedule D. Do you have your total gain amount?"
-      }
     ])
   }, [])
   
-
   useEffect(() => {
     
     const processFirstChat = async () => {
@@ -229,19 +213,7 @@ function Chat({className,query,firstchat}:props) {
           if(Ragsearch.aiResponse){
             await upload("AI",Ragsearch.aiResponse,sessionname)
           }
-        }
-        else if(firstchat.type=="Web Search" && firstchat.typeofmodel=="LLM"){
-          setisweb(true)
-          setState("Searching web")
-          shouldsearch={
-            ...firstchat,confidence:10,decision:"SEARCH"
-          }
-          console.log('Regular query search:', shouldsearch)
-          const answer=await handleform(shouldsearch, setIsSearching, setMessage,setSourcelist)
-          if(answer){
-            await upload("AI",answer,sessionname)
-          }
-        }else{
+        } else {
           shouldsearch = await searchOrweb(firstchat, setIsSearching,setState,setisweb)
           console.log('Regular query LLM:', shouldsearch)
           //search query
@@ -304,20 +276,7 @@ function Chat({className,query,firstchat}:props) {
           if(Ragsearch.aiResponse){
             await upload("AI",Ragsearch.aiResponse,sessionname)
           }
-        }
-        else if(query.type=="Web Search" && query.typeofmodel=="LLM"){
-          setisweb(true)
-          setState("Searching web")
-          shouldsearch={
-            ...query,confidence:10,decision:"SEARCH"
-          }
-          console.log('Regular query search:', shouldsearch)
-          const answer=await handleform(shouldsearch, setIsSearching, setMessage,setSourcelist)
-          console.log(answer)
-          if(answer){
-            await upload("AI",answer,sessionname)
-          }
-        }else{
+        } else {
           console.log("search")
           shouldsearch = await searchOrweb(query, setIsSearching,setState,setisweb)
           console.log('Regular query LLM:', shouldsearch)
@@ -410,7 +369,6 @@ function Chat({className,query,firstchat}:props) {
                   <h1 className={` ${item.role == "AI" ? 'justify-start w-[97%]' : 'bg-[#292929] max-w-[80%]'} py-3 px-3 rounded-3xl relative`}>{item.role=='AI' ?  <AiResponse State={isweb} sources={item.sourceList}  content={item.content}/> :item.content}</h1>
                 </div>
               ))
-              // <ExcalidrawApp/>
               :
               <ChatSkeleton />
             }

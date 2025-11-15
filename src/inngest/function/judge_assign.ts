@@ -12,7 +12,7 @@ export const assign_judge = inngest.createFunction(
   { event: "assign/judge" },
   async ({ event, step }) => {
     try {
-      const caseData = event.data.caseData.payload;
+      const caseData = event.data.caseData;
       const caseID = event.data.caseID;
       
       const all_judges = await step.run("get-all-judges", async () => {
@@ -21,7 +21,6 @@ export const assign_judge = inngest.createFunction(
         if (!judges || judges.length === 0) {
           throw new NonRetriableError("no judges found");
         }
-        console.log(judges)
         console.log("judges found successfully")
         return judges;
       });
@@ -76,12 +75,10 @@ export const assign_judge = inngest.createFunction(
         .trim();
 
       const parsedResponse = JSON.parse(cleanedJsonString);
-      console.log(parsedResponse.recommendedJudgeId);
+      console.log(parsedResponse);
 
       await step.run("update-case-assignment", async () => {
-        console.log(caseID)
 
-        // Ensure judgeId is a valid mongoose ObjectId instance when updating the case
         await caseDetailModel.findByIdAndUpdate(caseID, {
           $set: { 
             judgeId: new mongoose.Types.ObjectId(parsedResponse.recommendedJudgeId), 

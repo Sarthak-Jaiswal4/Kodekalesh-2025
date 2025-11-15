@@ -63,7 +63,7 @@ function Searchbar({ className,search,dosearch }: props) {
       if (incomingFiles.length > 0) {
         incomingFiles.forEach(async(file) => {
           setpdfs((prev) => (prev ? [...prev, file] : [file]));
-          await Upload(file)
+          // await Upload(file)
           addpdfs(file);
         });
       }
@@ -117,7 +117,7 @@ function Searchbar({ className,search,dosearch }: props) {
       const url=URL.createObjectURL(File)
       console.log(url)
       setfileURL(url)
-      await Upload(File)
+      // await Upload(File)
       console.log('File uploaded successfully')
     }else{
       setfileURL(undefined)

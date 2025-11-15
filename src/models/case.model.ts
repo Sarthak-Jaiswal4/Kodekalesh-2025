@@ -8,13 +8,6 @@ export interface CaseDocument extends Document {
     caseType?: 'Civil' | 'Criminal' | 'Family' | 'Appellate' | 'Probate';
     status?: 'Active' | 'Pending' | 'Stayed' | 'Closed' | 'Appealed';
     dateFiled?: Date;
-    documents?: Array<{
-        docId?: mongoose.Types.ObjectId;
-        title?: string;
-        docType?: string;
-        dateFiled?: Date;
-        filedBy?: string;
-    }>;
     customTags?: string[];
     aiCaseSummary?: string;
     aiConflictDetector?: Array<{
@@ -50,13 +43,6 @@ const caseDetail: Schema<CaseDocument> = new Schema({
     dateFiled: {
         type: Date
     },
-    documents: [{
-        // docId: { type: Schema.Types.ObjectId, ref: 'Document' },
-        title: String,
-        docType: String,
-        dateFiled: Date,
-        filedBy: String
-    }],
     customTags: [String],
     aiCaseSummary: {
         type: String // A living, 2-paragraph summary of the case status.

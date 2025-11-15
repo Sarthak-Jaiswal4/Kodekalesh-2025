@@ -18,6 +18,7 @@ import ErrorDialogue from './ErrorDialogue'
 import axios from 'axios'
 import { signOut } from 'next-auth/react'
 import { useSession } from 'next-auth/react';
+import { Pdfs } from './Pdfs'
 
 interface props {
   className?: string
@@ -55,8 +56,7 @@ function Header({ className }: props) {
 
   return (
     <>
-      <div className={`w-full h-[55px] md:h-[55px] px-1 md:px-4 flex flex-row items-center py-4 md:backdrop-blur-none backdrop-blur-sm ${className}`}>
-        
+      <div className={`w-full h-[65px] md:h-[55px] px-1 md:px-4 flex flex-row items-center py-4 md:backdrop-blur-md backdrop-blur-sm ${className}`}>
           <div className='flex justify-between items-center w-full h-full'>
             <div className='flex items-center rounded-xl px-2 py-1'>
               <SidebarGroupContent className="sm:hidden flex sticky top-2 left-0 z-10 h-full w-full py-2 inset-2">
@@ -64,12 +64,15 @@ function Header({ className }: props) {
               </SidebarGroupContent>
               {
                 isChatPage &&
-              <h1
-                className='text-xl md:text-2xl cursor-pointer bg-[#E27D60] bg-clip-text text-transparent font-bold md:font-semibold'
-                onClick={() => router.push('/')}
-              >
-                Lamda
-              </h1>
+                <div className='flex gap-4'>
+                  <h1
+                    className='text-xl md:text-2xl cursor-pointer bg-[#E27D60] bg-clip-text text-transparent font-extrabold'
+                    onClick={() => router.push('/')}
+                  >
+                    JuriSight
+                  </h1>
+                  <Pdfs className={' '} />
+                </div>
               }
             </div>
             <div className='flex gap-3 items-center'>

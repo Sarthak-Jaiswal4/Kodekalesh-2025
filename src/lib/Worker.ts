@@ -9,6 +9,7 @@ import { ContentData } from "@/types/contenttype";
 import path from "path";
 import { writeFile } from "fs/promises";
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { IChunk } from "@/models/chunk.model";
 
 const s3 = new S3Client({
   region: process.env.AWS_REGION!,
@@ -61,6 +62,8 @@ const chatworker=new Worker('chatUploadQueue',async(job)=>{
 const fileworker=new Worker('fileuploadqueue',async(job)=>{
   console.log('Worker',job.data)
   const filename=job.data.filename
+  const CaseDetailId=job.data.caseDetail
+  const documentId=job.data.document
 
   const getfilefroms3=new GetObjectCommand({
     Bucket:process.env.AWS_BUCKET,
@@ -86,20 +89,16 @@ const fileworker=new Worker('fileuploadqueue',async(job)=>{
 
   const embedding=await Embedding(docs)
 
-  const document: ContentData[]=[]
+  const document: IChunk[]=[]
   console.log(docs[2].metadata)
   
-  for(let i =0;i<docs.length;i++){
-    let result: ContentData={
-      sourceType:'static',
-      text:docs[i].pageContent,
+  for(let i = 0;i<docs.length;i++){
+    let result: IChunk={
+      documentId:documentId,
+      caseId:CaseDetailId,
+      pageContent:docs[i].pageContent,
       embedding:embedding[i],
-      metadata:{
-        static: {
-          fileName:docs[i].metadata.source as string,
-          pageNumber:docs[i].metadata.loc.pageNumber as number
-        }
-      },
+      metadata:docs[i].metadata,
     }
     document.push(result)
   }

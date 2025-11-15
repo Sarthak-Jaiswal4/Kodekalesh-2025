@@ -1,8 +1,7 @@
 import DBconnection from "@/lib/Connection";
-import chatSessionModel, { ChatSession } from "@/models/case.model"
-import contentModel, { contentSchema } from "@/models/knowledge.model"
+import chatSessionModel from "@/models/case.model"
+import { chunkModel, IChunk } from "@/models/chunk.model";
 import userModel from "@/models/user.model";
-import { ContentData } from "@/types/contenttype";
 
 await DBconnection()
 export const StoringChatSession=async(data:any)=>{
@@ -25,12 +24,11 @@ export const StoringChatSession=async(data:any)=>{
     }
 }
 
-export const StoreEmbedding=async(data:contentSchema[] | ContentData[])=>{
+export const StoreEmbedding=async(data:IChunk[])=>{
     try {
-        const response=await contentModel.insertMany(
+        const response=await chunkModel.insertMany(
             data
         ).then((res)=>{
-
             return 
         }).catch((err)=>{
             console.log('Error in storing embedding in mongoDB in queries.ts',err)

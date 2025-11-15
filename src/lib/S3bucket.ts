@@ -21,7 +21,6 @@ export async function UploadS3(file:File,filename:string){
             ContentType: "application/pdf",
         });
         const upload=await s3.send(putObjectCommand)
-        console.log(upload)
         return upload
     } catch (error) {
         console.log('Error in uploading to s3',error)

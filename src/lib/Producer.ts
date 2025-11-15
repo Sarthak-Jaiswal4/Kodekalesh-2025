@@ -39,19 +39,22 @@ export async function init(role: string, content: string,sessionname:string,sour
     console.log("Job added",res.id)
 }
 
-export async function Upload(File:File){
-
+export async function Upload(File: File, caseDetail:any, Document:any) {
     const filename = File.name.replaceAll(" ", "_")
     console.log("fileName",filename);
     const uploaded:any = await UploadS3(File,filename)
     if(uploaded.$metadata.httpStatusCode==200){
         const res = await FileUploadQueue.add('Upload file', {
-            filename
+            filename,
+            caseDetail: caseDetail._id,
+            document: Document._id,
         })
     }
     else{
         console.error("something when wrong cannot uplaod to the queue")
         throw new Error("Error in uploading file to queue")
     }
-    console.log("Job added")
+    console.log("Job added",uploaded)
+    // save s3 public link in document model so return the link
+    return 
 }

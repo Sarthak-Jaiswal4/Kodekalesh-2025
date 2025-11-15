@@ -1,6 +1,6 @@
 'use client'
 import { Sidebar, SidebarContent, SidebarMenuItem, SidebarMenuButton, SidebarMenu, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarTrigger, SidebarFooter, SidebarMenuAction } from "@/components/ui/sidebar"
-import { ChevronUp, MoreHorizontal, Plus, Search, Trash2, User2 } from "lucide-react"
+import { ChevronUp, MoreHorizontal, Plus, Search, Trash2, Upload, User2 } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu"
 import { useSidebar } from "@/components/ui/sidebar"
 import { useEffect, useMemo, useRef } from "react"
@@ -20,11 +20,11 @@ interface AppSidebarProps {
 }
 
 const items = [
-  // {
-  //   title: "New Chat",
-  //   url: "/",
-  //   icon: Plus,
-  // },
+  {
+    title: "Upload",
+    url: "/upload",
+    icon: Upload,
+  },
   {
     title: "Search",
     url: "#",
@@ -114,8 +114,8 @@ export function AppSidebar({ chatsession }: AppSidebarProps) {
                   <SidebarMenuItem className="hover:bg-[#323232] rounded-xl" key={item.title}>
                     <SidebarMenuButton className=" hover:bg-[#323232] hover:text-[#F4F1ED]"  asChild>
                       <a className="hover:bg-[#323232]" href={item.url}>
-                        {item.title==="New Chat" ? <HoverLabel content="New Chat"><item.icon size={22} className="text-[#E27D60]"/></HoverLabel> : <HoverLabel content="Search"><item.icon size={18}/></HoverLabel>}
-                        {item.title==="New Chat" ? <span className="text-[#E27D60]">{item.title}</span> : <span>{item.title}</span>}
+                        {item.title==="Upload" ? <HoverLabel content="Upload"><item.icon size={22} className="text-[#E27D60]"/></HoverLabel> : <HoverLabel content="Search"><item.icon size={18}/></HoverLabel>}
+                        {item.title==="Upload" ? <span className="text-[#E27D60]">{item.title}</span> : <span>{item.title}</span>}
                       </a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

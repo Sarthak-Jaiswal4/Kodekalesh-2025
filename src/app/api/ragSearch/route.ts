@@ -14,7 +14,7 @@ export async function POST(request:Request){
         }
         const fullpath=await getName(PDFs)
         console.log(fullpath)
-        const ragsearch:any=await PDFQueryEmbedding.PDFQueryEmbedding(query,fullpath)
+        const ragsearch:any=await PDFQueryEmbedding(query,fullpath)
         if(ragsearch){
             console.log(ragsearch?.response?.content)
             const answer=ragsearch?.response?.content

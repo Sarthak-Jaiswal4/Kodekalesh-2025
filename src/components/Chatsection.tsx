@@ -47,7 +47,6 @@ function Chatsection({ userquery, id }: Partial<ChatsectionProps>) {
       fetchCaseDetail();
     }
   }, [id]);
-  console.log(CaseDetail)
   // Adapt fields to align with Case model schema
   const caseNumber = CaseDetail?.caseNumber || '[123456-ABC]';
   const caseTitle = CaseDetail?.caseTitle || '[Case Title]';
@@ -114,8 +113,8 @@ function Chatsection({ userquery, id }: Partial<ChatsectionProps>) {
   return (
     <div className="w-full h-full flex bg-[#1a1a1a]">
       {/* Left Intelligence Pane with Tabs */}
-      <div className="w-full bg-[#181818] h-full flex flex-col border-r border-[#292929] min-w-[320px] max-w-[500px] sticky top-0 overflow-y-auto px-0 py-2">
-        <Tabs defaultValue="summary" className="h-full">
+      <div className="w-full bg-[#181818] h-full flex flex-col border-r border-[#292929] min-w-[320px] max-w-[700px] sticky top-0 overflow-y-auto px-0 py-2">
+        <Tabs defaultValue="summary" className="h-full w-full">
           <TabsList className="w-full justify-start rounded-none border-b border-[#373737] bg-[#212121] h-12 sticky top-0 z-10">
             <TabsTrigger
               value="summary"
@@ -305,7 +304,7 @@ function Chatsection({ userquery, id }: Partial<ChatsectionProps>) {
                 </CardContent>
               </Card>
 
-              <Card className="bg-[#242424] border-[#2c2c2c] text-[#F4F1ED]">
+              {/* <Card className="bg-[#242424] border-[#2c2c2c] text-[#F4F1ED]">
                 <CardHeader>
                   <CardTitle className="text-base" style={{ color: ACCENT_COLOR }}>
                     Drafting Assistant
@@ -329,7 +328,7 @@ function Chatsection({ userquery, id }: Partial<ChatsectionProps>) {
                     Generate Draft
                   </Button>
                 </CardContent>
-              </Card>
+              </Card> */}
             </TabsContent>
 
             <TabsContent value="precedents" className="mt-0 space-y-4">
@@ -405,7 +404,7 @@ function Chatsection({ userquery, id }: Partial<ChatsectionProps>) {
           </div>
         </Tabs>
       </div>
-      <div className="w-1/2 h-full flex flex-col items-center justify-center text-[#F4F1ED] gap-2 relative bg-[#131313]">
+      <div className="w-full h-full flex flex-col items-center justify-center text-[#F4F1ED] gap-2 relative bg-[#131313] min-w-[400px]">
         <Chat query={load} firstchat={userquery} className="h-full w-full pb-30 bg-[#131313]" />
         <div className="w-full h-auto fixed bottom-[-24px] z-10">
           <Searchbar className="w-full h-full" search={setLoad} />
