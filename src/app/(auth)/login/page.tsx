@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, ArrowRight, Sparkles, Brain, RefreshCw } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { signIn, SignInResponse } from "next-auth/react"
@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { cn } from "@/lib/utils"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 const SPECIALTY_OPTIONS = [
   'Civil-Corporate',
@@ -77,7 +78,7 @@ const Page = () => {
       setissubmitting(false)
     }
   };
-
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-black flex items-center justify-center p-4 relative">
       {/* Animated background elements */}
@@ -142,7 +143,23 @@ const Page = () => {
                 <span>Continue with Google</span>
               </Button>
             </div>
-            <Separator className="my-5 bg-white/10" />
+            <div className="my-2 flex justify-center">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="bg-gray-800/50 border border-gray-600 text-[#F4F1ED] px-4 py-2 rounded-lg font-medium flex items-center space-x-2 hover:bg-gray-700/50 hover:text-white transition-all duration-200">
+                    <span>For Recruiter</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="bg-gray-900 border border-gray-700 text-gray-100 min-w-[170px]">
+                  <DropdownMenuLabel>Sample</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>Email - sarthakjazz8@gmail.com</DropdownMenuItem>
+                  <DropdownMenuItem>Password - sarthak</DropdownMenuItem>
+                  <DropdownMenuItem>Specialties - Tax Law</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+            <Separator className="my-2 bg-white/10" />
             {/* Tab panes */}
             <TabsContent value="clerk">
               <form className="space-y-6" onSubmit={e => {
