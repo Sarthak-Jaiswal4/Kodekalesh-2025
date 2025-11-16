@@ -6,9 +6,9 @@ import DBconnection from "@/lib/Connection"
 await DBconnection()
 export async function POST(request:Request){
     try {
-        const {name,email,password,specialties}=await request.json()
+        const {name,email,password,specialties,role}=await request.json()
 
-        if(!name || !email || !password || !specialties){
+        if(!name || !email || !password || !role){
             console.log('Missing credential')
             return NextResponse.json({status:404,message:"Error Missing credential"})
         }
@@ -25,6 +25,7 @@ export async function POST(request:Request){
             verificationcode,
             ExpiryTime,
             specialties,
+            role
         })
 
         if(!createdUser){

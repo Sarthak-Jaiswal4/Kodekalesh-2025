@@ -51,9 +51,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const email = credentials.identifier
         const password = credentials.password
         const specialties= credentials.specialties
+        const role= credentials.role
         const baseURL = process.env.NEXTAUTH_URL || 'http://localhost:3000';
         const safeUser = await axios.post(`${baseURL}/api/Login`, {
-          password, email, specialties
+          password, email, specialties, role
         });
         console.log(safeUser.data)
         const user=safeUser.data.safeUser
@@ -68,6 +69,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.email = user.email
         token.name = user.name
         token.isverified = user.isverified
+        token.role= user.role
       }
       return token
     },
@@ -76,6 +78,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.user.email = token.email as string
       session.user.name = token.name as string
       session.user.isverified = token.isverified as boolean
+      session.user.role = token.role as string
       return session
     },
   },

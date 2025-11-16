@@ -115,7 +115,7 @@ function Chatsection({ userquery, id }: Partial<ChatsectionProps>) {
       {/* Left Intelligence Pane with Tabs */}
       <div className="w-full bg-[#181818] h-full flex flex-col border-r border-[#292929] min-w-[320px] max-w-[700px] sticky top-0 overflow-y-auto px-0 py-2">
         <Tabs defaultValue="summary" className="h-full w-full">
-          <TabsList className="w-full justify-start rounded-none border-b border-[#373737] bg-[#212121] h-12 sticky top-0 z-10">
+          <TabsList className="w-full justify-start rounded-none border-b border-[#373737] bg-[#212121] h-12 sticky top-0 z-10 px-3">
             <TabsTrigger
               value="summary"
               className="gap-2 text-[#F4F1ED] data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:border-[#E27D60] data-[state=active]:bg-[#212121]"
@@ -367,7 +367,7 @@ function Chatsection({ userquery, id }: Partial<ChatsectionProps>) {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2">
-                  {caseDocuments.map((doc, idx) => (
+                  {caseDocuments.map((doc: any, idx: number) => (
                     <div
                       className="p-3 border border-[#363636] rounded-md hover:bg-[#232323] cursor-pointer transition-colors"
                       key={doc.name + '-' + idx}

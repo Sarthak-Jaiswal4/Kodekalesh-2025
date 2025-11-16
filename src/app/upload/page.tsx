@@ -12,6 +12,7 @@ import { CalendarIcon } from "lucide-react";
 import { Loader2 } from "lucide-react";
 import axios from "axios";
 import { Upload } from "@/lib/Producer";
+import { signOut } from "next-auth/react";
 
 function TagInput({
   tags,
@@ -247,6 +248,7 @@ export default function UploadPage() {
 
   return (
     <div className="w-full min-h-screen bg-[#1A1A1A]" style={{ color: "#F4F1ED" }}>
+        <Button onClick={() => signOut()} className='px-3 py-3 rounded-3xl cursor border-0 absolute top-0 right-0 bg-gray-700 text-md m-4 text-red-400' variant='ghost'>Sign Out</Button>
         <div className="max-w-xl mx-auto py-12 px-4 space-y-10 bg-[#1A1A1A] rounded-3xl shadow-2xl border border-[#33363b]">
         <h1 className="text-3xl font-black text-center bg-gradient-to-r from-blue-400 to-[#E27D60] text-transparent bg-clip-text tracking-tight drop-shadow">
             <span className="flex items-center justify-center gap-2">

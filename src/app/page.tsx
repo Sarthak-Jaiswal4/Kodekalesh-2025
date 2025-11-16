@@ -84,24 +84,27 @@ export default function Home() {
   }
 
   const isAuthenticated=useMemo(() => status==='authenticated', [status])
+  const role=session?.user.role
+
+  if(role==='clerk' && isAuthenticated){
+    router.push("/upload")
+  }
 
   return (
     <div className="w-full sm:h-full h-auto bg-[#1A1A1A] text-[#F4F1ED] flex">
       <AppSidebar chatsession={chatsessionupdate}/>
       <div className="w-full h-auto flex flex-col justify-center items-center relative">
         <Header/>
-        {model.LM=="RAG" && 
-        <Pdfs className={'absolute top-[55px] left-6 md:top-[20px] md:left-4'} />
-        }
         {/* <div className="flex justify-center items-center text-center pb-[7vw] md:pb-[52px] gap-[40px] flex-col w-full h-full"> */}
-          {/* {isAuthenticated ? <h1 className="md:text-[2.5vw] text-[8.5vw] font-semibold">Hello {session?.user?.name}</h1> : null} */}
+          {isAuthenticated ? <Index /> : null}
+          {/* {isAuthenticated && role==="clerk" ?  router.push("/upload") : null} */}
           {/* <div className="flex flex-col gap-2">
             <h1 className="flex justify-center items-center md:text-[3.5rem] font-bold text-[2.75rem] text-wrap text-center leading-12 bg-[#E27D60] bg-clip-text text-transparent z-20 ">Lamda</h1>
             <p className="flex justify-center items-center md:text-[1.6rem] text-[1.3rem] text-wrap text-center font-medium">Let's explore your questions together!</p>
           </div>
           <Searchbar dosearch={firstquery}/> */}
         {/* </div> */}
-          <Index />
+         
       </div>
     </div>
   )

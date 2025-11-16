@@ -12,7 +12,7 @@ export interface User extends Document {
     maxCaseLoad?: number;
     status: "Active" | "On Vacation" | "On Leave" | "Admin Duty";
     cases: Types.ObjectId[] | CaseDocument[];
-    profilepic?: string;
+    role: "judge" | "clerk"
 }
 
 const UserSchema: Schema<User> = new Schema({
@@ -43,7 +43,7 @@ const UserSchema: Schema<User> = new Schema({
     specialties: [{
         type: String, // e.g., 'Civil-Corporate', 'Criminal-Appellate', 'Family Law'
         index: true,
-        required: [true, 'specialties is required'],
+        // required: [true, 'specialties is required'],
     }],
     maxCaseLoad: {
         type: Number,
@@ -59,6 +59,11 @@ const UserSchema: Schema<User> = new Schema({
         type: String,
         enum: ['Active', 'On Vacation', 'On Leave', 'Admin Duty'],
         default: 'Active'
+    },
+    role: {
+        type: String,
+        enum: ['judge', 'clerk'],
+        required: true,
     }
 });
 

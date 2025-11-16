@@ -102,7 +102,7 @@ export function AppSidebar({ chatsession }: AppSidebarProps) {
 
   return (
     <>
-      <Sidebar className={`text-[#F4F1ED] border-r-2 bg-[#171717] border-gray-700 overflow-y-auto w-[260px] transition-all duration-400 ease-in-out`} collapsible="icon">
+      <Sidebar className={`text-[#F4F1ED] border-r-2 bg-[#171717] border-gray-700 overflow-y-auto w-[360px] transition-all duration-400 ease-in-out`} collapsible="icon">
         <SidebarContent className="bg-[#171717]">
           <SidebarGroup>
             <SidebarGroupContent className="sticky top-0 left-0 z-10 h-full bg-[#171717] text-[#F4F1ED] w-full py-2 inset-2">

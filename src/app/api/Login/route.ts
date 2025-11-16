@@ -1,11 +1,13 @@
+import DBconnection from "@/lib/Connection";
 import userModel, { User } from "@/models/user.model";
 import bcrypt from 'bcrypt'
 import { NextResponse } from "next/server";
 
+await DBconnection()
 export async function POST(request:Request){
     try {
-        const {email,password,specialties}= await request.json()
-        if(!password || !email || !specialties){
+        const {email,password,specialties,role}= await request.json()
+        if(!password || !email || !role){
             return NextResponse.json({
                 status:400,
                 message:"Some credentials are missing"
@@ -19,7 +21,10 @@ export async function POST(request:Request){
         if(!ispassword){
           throw new Error("Incorrect Password")
         }
-        if(user.specialties[0]!=specialties){
+        if(user.role!=role){
+          throw new Error("Incorrect role")
+        }
+        if(user.specialties[0]!=specialties && user.role==='judge'){
           throw new Error("Incorrect specialities")
         }
         const safeUser = {
@@ -27,6 +32,7 @@ export async function POST(request:Request){
           email:      user.email,
           name:       user.username,
           isverified: user.isverified,
+          role:       user.role
         };
         return NextResponse.json({status:200,message:"Logined successfully",safeUser})
     } catch (error) {
