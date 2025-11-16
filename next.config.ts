@@ -1,9 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  env:{
-    MONGO_URL:""
-  },
   eslint: {
     ignoreDuringBuilds: true,
   },

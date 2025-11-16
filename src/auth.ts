@@ -53,6 +53,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const specialties= credentials.specialties
         const role= credentials.role
         const baseURL = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+        console.log(baseURL)
         const safeUser = await axios.post(`${baseURL}/api/Login`, {
           password, email, specialties, role
         });
