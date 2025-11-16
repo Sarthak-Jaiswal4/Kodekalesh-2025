@@ -131,31 +131,67 @@ export function AppSidebar({ chatsession }: AppSidebarProps) {
                   </div>
                 ) : isAuthenticated ? (
                   <div className="group-data-[collapsible=icon]:hidden text-[#F4F1ED] overflow-x-hidden overflow-y-hidden">
-                    <SidebarGroupLabel className="pb-4 pt-8 text-base text-gray-400">Cases pdfs</SidebarGroupLabel>
+                    <SidebarGroupLabel className="pb-4 pt-8 text-base text-gray-400">Cases</SidebarGroupLabel>
                     <SidebarGroupContent>
                       <SidebarMenu>
                         {chats.toReversed().map((item) => (
-                          <SidebarMenuItem className="group" >
-                            <SidebarMenuButton className={`${item.id===chatid.id ? `bg-[#272727]` : null} flex hover:text-[#F4F1ED] hover:bg-[#242424] hover:cursor-pointer`} asChild>
-                              <a href={`/chat/${item._id}`}>
-                                <span>{item.caseTitle}</span>
-                              </a>
-                            </SidebarMenuButton>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <SidebarMenuAction className="hover:bg-[#242424]">
-                                  <MoreHorizontal className='text-[#F4F1ED] hover:bg-[#242424]'/>
-                                </SidebarMenuAction>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent className="dark" side="right" align="start">
-                                <DropdownMenuItem className='pb-2 flex hover:bg-red-600' onClick={() => setShowDeleteDialog(true)}>
-                                  <Trash2 className='text-red-400 size-5' />
-                                  <h1 onClick={()=> setchatID(item.id)} className='text-red-400 px-1'>
-                                    Delete
-                                  </h1>
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
+                          <SidebarMenuItem className="group" key={item._id}>
+                            <div className="flex flex-col w-full ">
+                              <SidebarMenuButton
+                                className={`${
+                                  item.id === chatid.id ? `bg-[#272727]` : ""
+                                } flex hover:text-[#F4F1ED] hover:bg-[#242424] hover:cursor-pointer w-full`}
+                                asChild
+                              >
+                                <a className="flex flex-col items-start w-full px-2 py-3 h-auto" href={`/chat/${item._id}`}>
+                                  <span className="font-semibold">{item.caseTitle}</span>
+                                  <span className="text-xs text-gray-400">
+                                    <span className="font-bold">Case Number: </span>{item.caseNumber}
+                                  </span>
+                                  <span className="mt-1">
+                                    {/* Status badge */}
+                                    <span
+                                      className={`
+                                        inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold 
+                                        ${
+                                          item.status === "Active"
+                                            ? "bg-blue-200 text-blue-800"
+                                            : item.status === "Pending"
+                                            ? "bg-yellow-200 text-yellow-900"
+                                            : item.status === "Stayed"
+                                            ? "bg-gray-200 text-gray-800"
+                                            : item.status === "Closed"
+                                            ? "bg-green-200 text-green-800"
+                                            : item.status === "Appealed"
+                                            ? "bg-red-200 text-red-800"
+                                            : "bg-gray-100 text-gray-600"
+                                        }
+                                      `}
+                                    >
+                                      {item.status ?? "Unknown"}
+                                    </span>
+                                  </span>
+                                </a>
+                              </SidebarMenuButton>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <SidebarMenuAction className="hover:bg-[#242424]">
+                                    <MoreHorizontal className="text-[#F4F1ED] hover:bg-[#242424]" />
+                                  </SidebarMenuAction>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent className="dark" side="right" align="start">
+                                  <DropdownMenuItem
+                                    className="pb-2 flex hover:bg-red-600"
+                                    onClick={() => setShowDeleteDialog(true)}
+                                  >
+                                    <Trash2 className="text-red-400 size-5" />
+                                    <h1 onClick={() => setchatID(item.id)} className="text-red-400 px-1">
+                                      Delete
+                                    </h1>
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </div>
                           </SidebarMenuItem>
                         ))}
                       </SidebarMenu>

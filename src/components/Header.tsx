@@ -106,6 +106,7 @@ function Header({ className }: props) {
                   <Button onClick={() => router.push('/login')} className='px-3 py-3 rounded-3xl cursor bg-[#303030] border-0 cursor-pointer' variant='outline'>Sign in</Button>
                 </div>
               )}
+            </div>
               <a
                 href="https://github.com/Sarthak-Jaiswal4/Kodekalesh-2025"
                 target="_blank"
@@ -128,7 +129,6 @@ function Header({ className }: props) {
                   GitHub
                 </Button>
               </a>
-            </div>
           </div>
         
       </div>

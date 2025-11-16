@@ -1,7 +1,7 @@
 import DBconnection from "@/lib/Connection";
 import mongoose, { Document, Schema } from "mongoose";
 
-export interface CaseDocument extends Document {
+export interface CaseDocument {
     judgeId?: mongoose.Types.ObjectId | null;
     caseNumber: string;
     caseTitle: string;
