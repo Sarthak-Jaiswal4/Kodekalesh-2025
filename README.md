@@ -1,6 +1,6 @@
 Link - https://kodekalesh-2025-nozh.vercel.app/login
 
-#JuriSight
+# JuriSight
 
 > **Intelligent Judicial Orchestration:** A dual-portal ecosystem designed to streamline legal workflows using AI-driven case prioritization, automated workload balancing, and distributed document processing.
 
